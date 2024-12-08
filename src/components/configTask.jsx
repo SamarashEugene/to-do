@@ -1,6 +1,7 @@
 import {useState} from "react";
 import ToDoList from './toDoList';
 import moment from 'moment';
+import Archive from "./archive";
 
 function ConfigTask() {
     const [taskName, setTaskName] = useState("");
@@ -35,10 +36,12 @@ function ConfigTask() {
         setTasksArray(tasksArray.filter((_, index) => index !== indexToDelete));
     }
 
-    function completeTask(indexToComplete) {
-        setArchive([...archive, indexToComplete]);
+    function completeTask(nameToComplete, index) {
+        setArchive([...archive, nameToComplete]);
+
+        setTasksArray(tasksArray.filter((_, i) => i !== index));
+
         console.log('task Completed')
-        console.log(archive)
     }
 
     function handleAdd() {
@@ -98,12 +101,7 @@ function ConfigTask() {
                 </select>
             </div>
             <ToDoList message={filteredByInputSearch} onDelete={deleteTask} onComplete={completeTask}/>
-
-            <ul>
-                {archive.map((item, index) => (
-                    <li key={index}>{item.name}</li>
-                ))}
-            </ul>
+            <Archive archive={archive}/>
         </section>
     )
 }

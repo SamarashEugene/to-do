@@ -9,7 +9,7 @@ function ToDoList({message, onDelete, onComplete}) {
                             display: "flex",
                             lineHeight: '1.5em',
                         }}>
-                        <span className="status-task-btn" onClick={onComplete}>
+                        <span className="status-task-btn" onClick={() => onComplete(item, index)}>
                             <span></span>
                         </span>
                             {item.name}
