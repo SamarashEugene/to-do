@@ -1,7 +1,6 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import ToDoList from './toDoList';
 import moment from 'moment';
-import Archive from "./archive";
 
 function ConfigTask() {
     const [taskName, setTaskName] = useState("");
@@ -11,10 +10,26 @@ function ConfigTask() {
     const [errorMessage, setErrorMessage] = useState("none");
     const [searchInput, setSearchInput] = useState('');
     const [archive, setArchive] = useState([]);
+    const [filterValueByStatus, setFilterValueByStatus] = useState('');
+    const [showFilteredValue, setShowFilteredValue] = useState([...archive, ...tasksArray]);
 
     const dateInMonth = moment().add(1, 'month');
     const maxDate = dateInMonth.format('YYYY-MM-DD') + 'T' + dateInMonth.format('HH:mm');
-    const filteredByInputSearch = tasksArray.filter(task => task.name.toLowerCase().includes(searchInput.toLowerCase()));
+    // const filteredByInputSearch = tasksArray.filter(task => task.name.toLowerCase().includes(searchInput.toLowerCase()));
+
+    useEffect(() => {
+        if (filterValueByStatus === 'completed') {
+            setShowFilteredValue(archive)
+        } else if (filterValueByStatus === 'uncompleted') {
+            setShowFilteredValue(tasksArray)
+        } else {
+            setShowFilteredValue([...archive, ...tasksArray])
+        }
+    }, [filterValueByStatus, archive, tasksArray]);
+
+    function filterByStatus(e) {
+        setFilterValueByStatus(e.target.value);
+    }
 
     function showFilter(e) {
         setSearchInput(e.target.value);
@@ -36,12 +51,10 @@ function ConfigTask() {
         setTasksArray(tasksArray.filter((_, index) => index !== indexToDelete));
     }
 
-    function completeTask(nameToComplete, index) {
-        setArchive([...archive, nameToComplete]);
-
+    function completeTask(item, index) {
+        item.status = 'completed'
+        setArchive([...archive, item]);
         setTasksArray(tasksArray.filter((_, i) => i !== index));
-
-        console.log('task Completed')
     }
 
     function handleAdd() {
@@ -49,6 +62,7 @@ function ConfigTask() {
             name: taskName,
             date: taskDate ? moment(taskDate) : null,
             priority: priority,
+            status: 'uncompleted',
         }
 
         if (taskName.trim() === '') {
@@ -90,7 +104,7 @@ function ConfigTask() {
             <h2>Список завдань</h2>
             <div id="filters">
                 <input type="text" id="search-input" placeholder="Пошук..." value={searchInput} onChange={showFilter}/>
-                <select id="filter-category">
+                <select id="filter-category" onChange={filterByStatus}>
                     <option value="all">Усі</option>
                     <option value="completed">Виконані</option>
                     <option value="uncompleted">Невиконані</option>
@@ -100,8 +114,12 @@ function ConfigTask() {
                     <option value="priority">За пріоритетом</option>
                 </select>
             </div>
-            <ToDoList message={filteredByInputSearch} onDelete={deleteTask} onComplete={completeTask}/>
-            <Archive archive={archive}/>
+
+            <ToDoList message={showFilteredValue} onDelete={deleteTask} onComplete={completeTask}/>
+
+            <ul>
+                {showFilteredValue.map((item, index) => (<li key={index}>{item.name}</li>))}
+            </ul>
         </section>
     )
 }

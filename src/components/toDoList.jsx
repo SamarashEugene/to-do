@@ -26,10 +26,10 @@ function ToDoList({message, onDelete, onComplete}) {
                                      style={{fontSize: '10px'}}>{item.date && item.date.format('DD.MM.YY')}</div>
                             </div>
                             <div className='priority'>{item.priority}</div>
-                            <span className="deleteTask" onClick={() => onDelete(index)}>
+                            <button className="deleteTask" onClick={() => onDelete(index)}>
                            <span className="delete-btn"></span>
                            <span className="delete-btn"></span>
-                        </span>
+                        </button>
                         </div>
                     </li>
                 ))}
