@@ -90,7 +90,7 @@ input, select, button {
 footer {
     position: absolute;
     width: 100%;
-    /*bottom: 0;*/
+    bottom: 0;
     text-align: center;
 }
 
@@ -104,8 +104,24 @@ li > div {
     display: flex;
 }
 
-.dead-line, .priority {
+.dead-line, .priority-selector {
     margin-right: 30px;
+}
+
+.date-time{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.date-time > span {
+    margin-right: 10px;
+}
+
+.priority-selector {
+    border: none;
+    cursor: pointer
 }
 
 .deleteTask {
@@ -175,4 +191,20 @@ li > div {
     background: #fff;
 
     border-radius: 50%;
+}
+
+#filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1em;
+}
+
+input[type="datetime-local"]{
+    width: 40px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator{
+    cursor: pointer;
+    z-index: 2;
 }

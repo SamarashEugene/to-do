@@ -1,6 +1,12 @@
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import ToDoList from './toDoList';
 import moment from 'moment';
+
+
+// todo edit date in existing task
+// todo edit task text in current task
+// todo dark/light mode
+
 
 function ConfigTask() {
     const [taskName, setTaskName] = useState("");
@@ -10,25 +16,40 @@ function ConfigTask() {
     const [errorMessage, setErrorMessage] = useState("none");
     const [searchInput, setSearchInput] = useState('');
     const [archive, setArchive] = useState([]);
-    const [filterValueByStatus, setFilterValueByStatus] = useState('');
-    const [showFilteredValue, setShowFilteredValue] = useState([...archive, ...tasksArray]);
+    const [filterByStatus, setFilterByStatus] = useState('All');
+    const [filterByDatePriority, setFilterByDate] = useState('');
 
     const dateInMonth = moment().add(1, 'month');
     const maxDate = dateInMonth.format('YYYY-MM-DD') + 'T' + dateInMonth.format('HH:mm');
-    // const filteredByInputSearch = tasksArray.filter(task => task.name.toLowerCase().includes(searchInput.toLowerCase()));
 
-    useEffect(() => {
-        if (filterValueByStatus === 'completed') {
-            setShowFilteredValue(archive)
-        } else if (filterValueByStatus === 'uncompleted') {
-            setShowFilteredValue(tasksArray)
-        } else {
-            setShowFilteredValue([...archive, ...tasksArray])
-        }
-    }, [filterValueByStatus, archive, tasksArray]);
+    const filteredTasks = [...tasksArray, ...archive]
+        .filter(task => {
+            if (filterByStatus === 'completed') return task.status === 'completed';
+            if (filterByStatus === 'uncompleted') return task.status === 'uncompleted';
+            return true
+        })
+        .sort((a, b) => {
+            if (filterByDatePriority === 'date') {
+                return new Date(a.date) - new Date(b.date)
+            }
+            if (filterByDatePriority === 'priority') {
+                const priorities = {'Низький': 1, 'Середній': 2, 'Високий': 3}
+                return priorities[b.priority] - priorities[a.priority];
+            }
+            return 0
+        })
+        .filter(task => task.name.toLowerCase().includes(searchInput.toLowerCase()))
 
-    function filterByStatus(e) {
-        setFilterValueByStatus(e.target.value);
+    function changeTaskDate(e) {
+        setTaskDate(e.target.value)
+    }
+
+    function toFilterByDatePriority(e) {
+        setFilterByDate(e.target.value)
+    }
+
+    function toFilterByStatus(e) {
+        setFilterByStatus(e.target.value);
     }
 
     function showFilter(e) {
@@ -43,6 +64,32 @@ function ConfigTask() {
         setPriority(e.target.value);
     }
 
+    function changeTaskDate(e, index) {
+        const newDate = e.target.value;
+
+        const updatedDate = tasksArray.map(task => {
+            if (task.id === task.id) {
+                return {...task, date: newDate}
+            }
+            return task
+        })
+
+        setTasksArray(updatedDate)
+    }
+
+    function changePriority(e, index) {
+        const newPriority = e.target.value;
+
+        const updatedTasks = tasksArray.map((task, i) => {
+            if (i === index) {
+                return {...task, priority: newPriority};
+            }
+            return task;
+        })
+
+        setTasksArray(updatedTasks)
+    }
+
     function handleInputChange(e) {
         setTaskName(e.target.value);
     }
@@ -52,8 +99,8 @@ function ConfigTask() {
     }
 
     function completeTask(item, index) {
-        item.status = 'completed'
-        setArchive([...archive, item]);
+        const updatedItem = {...item, status: 'completed'};
+        setArchive([...archive, updatedItem]);
         setTasksArray(tasksArray.filter((_, i) => i !== index));
     }
 
@@ -104,22 +151,23 @@ function ConfigTask() {
             <h2>Список завдань</h2>
             <div id="filters">
                 <input type="text" id="search-input" placeholder="Пошук..." value={searchInput} onChange={showFilter}/>
-                <select id="filter-category" onChange={filterByStatus}>
+                <select onChange={toFilterByStatus}>
                     <option value="all">Усі</option>
                     <option value="completed">Виконані</option>
                     <option value="uncompleted">Невиконані</option>
                 </select>
-                <select id="sort-options">
+                <select id="sort-options" onChange={toFilterByDatePriority}>
                     <option value="date">За датою</option>
                     <option value="priority">За пріоритетом</option>
                 </select>
             </div>
 
-            <ToDoList message={showFilteredValue} onDelete={deleteTask} onComplete={completeTask}/>
+            <ToDoList message={filteredTasks}
+                      changePriority={changePriority}
+                      onDelete={deleteTask}
+                      onComplete={completeTask}
+                      onChangeTaskDate={changeTaskDate}/>
 
-            <ul>
-                {showFilteredValue.map((item, index) => (<li key={index}>{item.name}</li>))}
-            </ul>
         </section>
     )
 }
