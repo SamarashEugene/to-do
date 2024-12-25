@@ -208,3 +208,30 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator{
     cursor: pointer;
     z-index: 2;
 }
+
+.task-name{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+div .task-name > textarea{
+    width: 100%;
+    max-height: 100%;
+    font-size: 1rem;
+    padding-left: 20px;
+    border: none;
+    outline: none;
+
+    resize:none;
+    overflow: hidden;
+}
+
+
+.edit-task-icon{
+    font-size: 6px;
+    cursor: pointer;
+    position: absolute;
+    left: 5px;
+}

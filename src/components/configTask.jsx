@@ -3,7 +3,6 @@ import ToDoList from './toDoList';
 import moment from 'moment';
 
 
-// todo edit date in existing task
 // todo edit task text in current task
 // todo dark/light mode
 
@@ -40,9 +39,6 @@ function ConfigTask() {
         })
         .filter(task => task.name.toLowerCase().includes(searchInput.toLowerCase()))
 
-    function changeTaskDate(e) {
-        setTaskDate(e.target.value)
-    }
 
     function toFilterByDatePriority(e) {
         setFilterByDate(e.target.value)
@@ -64,11 +60,22 @@ function ConfigTask() {
         setPriority(e.target.value);
     }
 
+    function changeTaskName(e, index) {
+        const newName = e.target.value;
+        const updatedTasks = tasksArray.map((task, i) => {
+            if (i === index) {
+                return {...task, name: newName};
+            }
+            return task;
+        })
+        setTasksArray(updatedTasks)
+    }
+
     function changeTaskDate(e, index) {
         const newDate = e.target.value;
 
         const updatedDate = tasksArray.map(task => {
-            if (task.id === task.id) {
+            if (index === task.id) {
                 return {...task, date: newDate}
             }
             return task
@@ -162,10 +169,12 @@ function ConfigTask() {
                 </select>
             </div>
 
+
             <ToDoList message={filteredTasks}
                       changePriority={changePriority}
                       onDelete={deleteTask}
                       onComplete={completeTask}
+                      onChangeTaskName={changeTaskName}
                       onChangeTaskDate={changeTaskDate}/>
 
         </section>

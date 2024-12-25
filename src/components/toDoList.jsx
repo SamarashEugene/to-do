@@ -1,7 +1,10 @@
 import moment from 'moment';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPen} from '@fortawesome/free-solid-svg-icons';
+import AutoResizeTextarea from './AutoResizeTextarea';
 
 
-function ToDoList({message, onDelete, onComplete, changePriority, onChangeTaskDate}) {
+function ToDoList({message, onDelete, onComplete, changePriority, onChangeTaskDate, onChangeTaskName}) {
 
     const dateInMonth = moment().add(1, 'month');
     const maxDate = dateInMonth.format('YYYY-MM-DD') + 'T' + dateInMonth.format('HH:mm');
@@ -14,6 +17,8 @@ function ToDoList({message, onDelete, onComplete, changePriority, onChangeTaskDa
                         <div style={{
                             color: item.status === 'completed' ? 'rgb(170, 170, 170)' : '#000',
                             display: "flex",
+                            justifyContent: "left",
+                            width: '100%',
                             lineHeight: '1.5em',
                         }}>
                             <button className="status-task-btn"
@@ -25,7 +30,13 @@ function ToDoList({message, onDelete, onComplete, changePriority, onChangeTaskDa
                                     disabled={item.status === 'completed'}>
                                 <span></span>
                             </button>
-                            {item.name}
+                            <div className="task-name">
+                                <FontAwesomeIcon icon={faPen}
+                                                 className="edit-task-icon"
+                                />
+                                <AutoResizeTextarea value={item.name}
+                                                    onChange={(e) => onChangeTaskName(e, index)}/>
+                            </div>
                         </div>
                         <div className="task-set">
                             <div className="dead-line">
@@ -39,7 +50,10 @@ function ToDoList({message, onDelete, onComplete, changePriority, onChangeTaskDa
                                     {moment(item.date).format('HH:mm DD.MM.YYYY ')}
                                      </span>}
                                     <input type="datetime-local"
-                                           style={{display: item.status === 'completed' ? 'none' : 'block', border: '2px solid #fff'}}
+                                           style={{
+                                               display: item.status === 'completed' ? 'none' : 'block',
+                                               border: '2px solid #fff'
+                                           }}
                                            min={moment().format('YYYY-MM-DD') + 'T' + moment().format('HH:mm')}
                                            max={maxDate}
                                            value={item.date ? moment(item.date).format('YYYY-MM-DDTHH:mm') : ''}
