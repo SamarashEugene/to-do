@@ -3,8 +3,9 @@ import ToDoList from './toDoList';
 import moment from 'moment';
 
 
-// todo edit task text in current task
+// todo save tasks in an external file
 // todo dark/light mode
+
 
 
 function ConfigTask() {
@@ -74,13 +75,12 @@ function ConfigTask() {
     function changeTaskDate(e, index) {
         const newDate = e.target.value;
 
-        const updatedDate = tasksArray.map(task => {
-            if (index === task.id) {
+        const updatedDate = tasksArray.map((task, i) => {
+            if (i === index) {
                 return {...task, date: newDate}
             }
             return task
         })
-
         setTasksArray(updatedDate)
     }
 
